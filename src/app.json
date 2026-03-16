@@ -1,0 +1,13 @@
+{
+    "name": "backend-api",
+    "namespace": "production",
+    "labels": {"app": "backend-server"},
+    "ingress_sources": [
+        {"app_name": "frontend-ui", "port": 80},
+        {"app_name": "admin-panel", "port": 443}
+    ],
+    "egress_destinations": [
+        {"app_name": "mongodb-db", "port": 27017},
+        {"app_name": "redis-cache", "port": 6379}
+    ]
+}

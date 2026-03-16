@@ -1,0 +1,22 @@
+name: DevOps CI Pipeline
+on: [push] # Trigger on every code commit
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3 # Pull code into runner
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Execute Test Suite
+        run: python -m pytest tests/ # Verify logic before deployment
+        
+      - name: Verify Generator Execution
+        run: python src/netgen.py src/app.json # Dry-run generation
