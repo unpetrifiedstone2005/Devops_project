@@ -44,8 +44,8 @@ def generate_policy(spec: AppSpec) -> dict:
     }
 
 if __name__ == "__main__":
-    # Handle CLI arguments: Default to src/app.json for local/docker runs
-    input_file = sys.argv[1] if len(sys.argv) > 1 else "src/app.json"
+    # Handle CLI arguments: Default to infrastructure/kubernetes/app.json for local/docker runs
+    input_file = sys.argv[1] if len(sys.argv) > 1 else "infrastructure/kubernetes/app.json"
     
     try:
         with open(input_file, "r") as f:
