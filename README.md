@@ -1,92 +1,174 @@
-Markdown
-
 # Container Network Policy Generator 🚀
 
 ## Overview
-This DevOps utility automates the generation of Kubernetes `NetworkPolicy` manifests. By defining application dependencies in a structured JSON format, the tool ensures **Zero Trust** and **Least Privilege** network security across microservices, eliminating the need for manual YAML authoring.
+
+This DevOps utility automates the generation of Kubernetes `NetworkPolicy` manifests. By defining application dependencies in a structured JSON format, the tool enforces **Zero Trust** and **Least Privilege** network security across microservices, eliminating the need for manual YAML authoring.
 
 ---
 
 ## 📂 Project Structure
+
 Following professional DevOps directory standards, the repository is organized as follows:
 
-* **`.github/workflows/`**: CI/CD pipeline definitions (GitHub Actions).
-* **`docs/`**: Technical documentation including Architecture and User Guides.
-* **`infrastructure/`**: 
-    * `kubernetes/`: Configuration management data (`app.json`).
-    * `docker/`: Containerization logic and Dockerfile.
-* **`src/`**: Core Python implementation and logic.
-* **`tests/unit/`**: Automated unit tests using `pytest`.
-* **`requirements.txt`**: Project dependency manifest.
+```
+Devops_project/
+│
+├── .github/workflows/        # CI/CD pipeline definitions (GitHub Actions)
+├── docs/                     # Technical documentation (architecture, guides)
+├── infrastructure/
+│   ├── kubernetes/           # Configuration management data (app.json)
+│   └── docker/               # Containerization logic and Dockerfile
+├── src/                      # Core Python implementation and logic
+├── tests/
+│   └── unit/                 # Automated unit tests using pytest
+├── requirements.txt          # Python dependency manifest
+└── README.md
+```
 
 ---
 
 ## 🛠️ Installation & Setup
 
-1. **Clone the repository**:
-   ```bash
-   git clone [https://github.com/unpetrifiedstone2005/Devops_project.git](https://github.com/unpetrifiedstone2005/Devops_project.git)
-   cd Devops_project
-Install dependencies:
+### 1. Clone the Repository
 
-Bash
+```bash
+git clone https://github.com/unpetrifiedstone2005/Devops_project.git
+cd Devops_project
+```
 
+### 2. Install Dependencies
+
+```bash
 python -m pip install -r requirements.txt
-🚀 Usage
-1. Local Execution
-To generate a policy using the default configuration:
+```
 
-Bash
+---
 
+## 🚀 Usage
+
+### Local Execution
+
+To generate a network policy using the default configuration:
+
+```bash
 python src/netgen.py infrastructure/kubernetes/app.json
-2. Docker Execution
+```
+
+---
+
+### Docker Execution
+
 The tool is fully containerized to ensure portability and environment consistency.
 
-Bash
+#### Build the Image
 
-# Build the image from the root directory
+```bash
 docker build -t netgen .
+```
 
-# Run the generator and output the YAML to your current directory
-# Windows (PowerShell/CMD):
+#### Run the Generator
+
+**Windows (PowerShell / CMD)**
+
+```bash
 docker run -v %cd%:/app netgen infrastructure/kubernetes/app.json
+```
 
-# Linux/Mac:
+**Linux / Mac**
+
+```bash
 docker run -v $(pwd):/app netgen infrastructure/kubernetes/app.json
-🛡️ DevOps Implementation Details
-✅ CI/CD Pipeline
-Automated via GitHub Actions. Every push triggers a workflow that:
+```
 
-Sets up a Python 3.11 environment.
+The generated Kubernetes `NetworkPolicy` YAML will be output to the mounted directory.
 
-Installs required dependencies.
+---
 
-Executes the pytest suite in tests/unit/.
+## 🛡️ DevOps Implementation Details
 
-Performs a validation "Smoke Test" by running the generator logic to ensure artifact creation.
+### ✅ CI/CD Pipeline
 
-✅ Monitoring & Observability
-The tool utilizes the Python logging library to provide structured operational logs. This ensures that success states and validation errors are easily trackable by log aggregation tools, satisfying infrastructure monitoring requirements.
+Automated via **GitHub Actions**. Every push triggers a workflow that:
 
-✅ Configuration Management
-Adhering to "Infrastructure as Code" (IaC) principles, application intent is decoupled from logic. The network rules are managed via infrastructure/kubernetes/app.json, allowing for policy updates without source code modification.
+* Sets up a **Python 3.11 environment**
+* Installs required dependencies
+* Runs the **pytest test suite** located in `tests/unit/`
+* Performs a **smoke test** by executing the generator to ensure valid artifact creation
 
-✅ Containerization
-The project includes a multi-layered Dockerfile utilizing a python:3.11-slim base image to ensure a minimal security attack surface and rapid deployment across different environments.
+---
 
-🧪 Testing
-Run the automated test suite to verify logic integrity:
+### ✅ Monitoring & Observability
 
-Bash
+The project uses Python’s built-in **logging** library to provide structured operational logs.
 
+This ensures:
+
+* Validation errors are clearly visible
+* Execution results are traceable
+* Logs can be easily integrated with external log aggregation tools
+
+---
+
+### ✅ Configuration Management
+
+Following **Infrastructure as Code (IaC)** principles, application configuration is separated from logic.
+
+All service dependency definitions are stored in:
+
+```
+infrastructure/kubernetes/app.json
+```
+
+This allows network policies to be updated without modifying source code.
+
+---
+
+### ✅ Containerization
+
+The project includes a **multi-layered Dockerfile** using the lightweight base image:
+
+```
+python:3.11-slim
+```
+
+Benefits:
+
+* Reduced attack surface
+* Faster build times
+* Consistent runtime environment across systems
+
+---
+
+## 🧪 Testing
+
+Run the automated test suite to verify generator logic:
+
+```bash
 python -m pytest tests/unit/
+```
 
+---
 
+## 💡 Updating the Repository
 
-### 💡 Final Steps to Sync GitHub
-Now that your file is ready, run these exact commands in your terminal to fix that "rejected" error and update your repo:
+If you encounter a rejected push when updating the repository, run:
 
-1. `git add .`
-2. `git commit -m "docs: complete enterprise readme and structure update"`
-3. `git push origin main --force` 
+```bash
+git add .
+git commit -m "docs: complete enterprise readme and structure update"
+git push origin main --force
+```
 
+---
+
+## 📌 Summary
+
+The **Container Network Policy Generator** provides a lightweight DevOps tool that:
+
+* Automatically generates Kubernetes `NetworkPolicy` manifests
+* Enforces **Zero Trust networking**
+* Implements **Infrastructure as Code**
+* Integrates **CI/CD testing pipelines**
+* Supports **containerized execution via Docker**
+
+This helps DevOps teams maintain secure and scalable microservice communication without manual policy configuration.
