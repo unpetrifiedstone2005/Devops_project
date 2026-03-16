@@ -17,7 +17,7 @@ jobs:
         
       - name: Execute Test Suite
         # Updated to find tests in the subfolder
-        run: python -m pytest tests/unit/ 
+        run: python -m pytest src/tests/ 
         
       - name: Verify Generator Execution
         # Updated to point to the new location of app.json

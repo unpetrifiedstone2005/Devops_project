@@ -144,7 +144,7 @@ Benefits:
 Run the automated test suite to verify generator logic:
 
 ```bash
-python -m pytest tests/unit/
+python -m pytest src/tests/
 ```
 
 ---
