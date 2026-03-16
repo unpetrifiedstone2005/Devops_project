@@ -16,7 +16,9 @@ jobs:
         run: pip install -r requirements.txt
         
       - name: Execute Test Suite
-        run: python -m pytest tests/ # Verify logic before deployment
+        # Updated to find tests in the subfolder
+        run: python -m pytest tests/unit/ 
         
       - name: Verify Generator Execution
-        run: python src/netgen.py src/app.json # Dry-run generation
+        # Updated to point to the new location of app.json
+        run: python src/netgen.py infrastructure/kubernetes/app.json
