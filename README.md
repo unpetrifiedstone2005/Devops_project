@@ -77,6 +77,49 @@ docker compose -f infrastructure/docker/docker-compose.yml up --build
 Since the tool is a REST API, you "input" data using a POST request. You must include the X-API-KEY header for authentication.
 ```
 
+Sample Input Json to test the API
+
+```bash
+{
+  "name": "order-processor",
+  "namespace": "ecommerce-prod",
+  "labels": {
+    "app": "orders",
+    "tier": "backend",
+    "version": "v1.2.0",
+    "managed-by": "devops-team"
+  },
+  "ingress_sources": [
+    {
+      "app_name": "frontend-web",
+      "port": 80
+    },
+    {
+      "app_name": "api-gateway",
+      "port": 443
+    },
+    {
+      "app_name": "inventory-sync",
+      "port": 8080
+    }
+  ],
+  "egress_destinations": [
+    {
+      "app_name": "postgres-database",
+      "port": 5432
+    },
+    {
+      "app_name": "redis-cache",
+      "port": 6379
+    },
+    {
+      "app_name": "payment-gateway-external",
+      "port": 443
+    }
+  ]
+}
+```
+
 #### Using Curl:
 
 ```bash
