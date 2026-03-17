@@ -61,16 +61,30 @@ Use this to ensure your environment exactly matches the CI/CD pipeline.
 docker compose -f infrastructure/docker/docker-compose.yml up --build
 ```
 
+---
 
 ## 🧪 Interactive Documentation (Swagger)
 
 FastAPI automatically generates an interactive testing environment.
 
 1. Run the service.
-Open your browser to: ```text http://127.0.0.1:8000/docs ```
-Click Authorize and enter ```text devops-internal-secret ```.
-Expand the POST ```text /generate``` section to test the API directly from the UI.
+2. Open your browser to: ```text http://127.0.0.1:8000/docs ```
+3. Click Authorize and enter ```text devops-internal-secret ```.
+4. Expand the POST ```text /generate``` section to test the API directly from the UI.
 
+---
+
+---
+
+## 🛠️ Troubleshooting
+
+| Issue | Potential Cause | Solution |
+| :--- | :--- | :--- |
+| **404 Not Found** | Incorrect URL path. | Ensure the request URL ends with `/generate`. |
+| **403 Unauthorized** | Missing or invalid API Key. | Verify the `X-API-KEY` header is present and correct. |
+| **422 Unprocessable** | JSON Schema validation failed. | Ensure required fields like `name` and `labels` are present. |
+| **ModuleNotFoundError** | Python environment or path issue. | Ensure you run the server via `python -m uvicorn src.main:app`. |
+| **Connection Refused** | API server is not running. | Check if the terminal or Docker container is still active. |
 
 
 
