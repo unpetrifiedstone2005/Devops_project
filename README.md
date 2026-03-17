@@ -118,7 +118,7 @@ Executes a Docker Build Check to verify infrastructure integrity.
 
 ---
 
-### Configuration Management & IaC
+### ✅ Configuration Management & IaC
 Following Infrastructure as Code (IaC) principles, application configuration is separated from logic. Service dependency definitions can be stored in infrastructure/kubernetes/app.json, allowing policies to be updated without modifying source code.
 
 ---
