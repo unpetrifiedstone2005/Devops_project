@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # The Deployed API Service
+  netgen-api:
+    build:
+      # Context points to project root (../../) so it can see /src and requirements.txt
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: netgen_service
+    ports:
+      - "8000:8000"
+    environment:
+      # Authentication Requirement: This key must be sent in the X-API-KEY header
+      - API_KEY=devops-internal-secret
+      - ENV=production
+    healthcheck:
+      # Monitoring Requirement: Periodically checks if the API is responsive
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - netgen_network
+
+networks:
+  netgen_network:
+    driver: bridge

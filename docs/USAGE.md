@@ -1,7 +1,7 @@
-# Configuration & User Guide
+# Configuration & User Guide 📖
 
 ## 🛠️ Input Specification (`app.json`)
-The generator uses a JSON schema to define network intent. This file acts as your **Configuration Management** source.
+The generator uses a structured JSON schema to define network intent. This file serves as your **Infrastructure as Code (IaC)** source of truth.
 
 ### File Location
 `infrastructure/kubernetes/app.json`
@@ -9,33 +9,83 @@ The generator uses a JSON schema to define network intent. This file acts as you
 ### Field Definitions
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `name` | String | The unique name of the application. |
-| `namespace` | String | The K8s namespace (e.g., `production`, `staging`). |
-| `labels` | Object | The labels used to identify the target Pods. |
-| `ingress_sources` | Array | Services allowed to send traffic TO this app. |
-| `egress_destinations` | Array | Services this app is allowed to communicate WITH. |
+| `name` | String | **Required.** The unique name of the application. |
+| `namespace` | String | The K8s namespace (Defaults to `default`). |
+| `labels` | Object | **Required.** Labels used to identify the target Pods. |
+| `ingress_sources` | Array | Services allowed to send traffic **TO** this app. |
+| `egress_destinations` | Array | Services this app is allowed to communicate **WITH**. |
 
 ---
 
-## ➕ How to Add a New Rule
+## ➕ How to Update Network Rules
 
-To allow a new service (e.g., `metrics-server`) to access your app on port `9090`:
+To allow a new service (e.g., `monitoring-agent`) to access your app on port `9090`:
 
-1.  Open **`infrastructure/kubernetes/app.json`**.
-2.  Add the following object to the `ingress_sources` array:
+1.  **Modify the JSON**: Open your request body or `app.json` and update the `ingress_sources`:
     ```json
     {
-      "app_name": "metrics-server", 
+      "app_name": "monitoring-agent", 
       "port": 9090
     }
     ```
-3.  Save the file and re-run the generator.
+2.  **Submit to API**: Send the updated JSON via a `POST` request to the `/generate` endpoint.
+3.  **Apply to Cluster**: Take the returned YAML and run `kubectl apply -f manifest.yaml`.
 
 ---
 
-## 🚀 Running the Tool
+## 🚀 Running the Service
 
-### Local Execution
-Ensure you are in the project root and run:
+### 1. Local Development Mode
+Use this for rapid testing without the overhead of containers.
+
+**Start the Server:**
 ```bash
-python src/netgen.py infrastructure/kubernetes/app.json
+python -m uvicorn src.main:app --reload
+```
+### Test with curl
+
+```bash
+curl -X POST [http://127.0.0.1:8000/generate](http://127.0.0.1:8000/generate) \
+     -H "Content-Type: application/json" \
+     -H "X-API-KEY: devops-internal-secret" \
+     -d @infrastructure/kubernetes/app.json
+```
+
+### 2. Docker Compose (Production-Ready)
+
+Use this to ensure your environment exactly matches the CI/CD pipeline.
+
+### Start the Orchestrated Service:
+
+```bash
+docker compose -f infrastructure/docker/docker-compose.yml up --build
+```
+
+---
+
+## 🧪 Interactive Documentation (Swagger)
+
+FastAPI automatically generates an interactive testing environment.
+
+1. Run the service.
+2. Open your browser to: ```text http://127.0.0.1:8000/docs ```
+3. Click Authorize and enter ```text devops-internal-secret ```.
+4. Expand the POST ```text /generate``` section to test the API directly from the UI.
+
+---
+
+---
+
+## 🛠️ Troubleshooting
+
+| Issue | Potential Cause | Solution |
+| :--- | :--- | :--- |
+| **404 Not Found** | Incorrect URL path. | Ensure the request URL ends with `/generate`. |
+| **403 Unauthorized** | Missing or invalid API Key. | Verify the `X-API-KEY` header is present and correct. |
+| **422 Unprocessable** | JSON Schema validation failed. | Ensure required fields like `name` and `labels` are present. |
+| **ModuleNotFoundError** | Python environment or path issue. | Ensure you run the server via `python -m uvicorn src.main:app`. |
+| **Connection Refused** | API server is not running. | Check if the terminal or Docker container is still active. |
+
+
+
+

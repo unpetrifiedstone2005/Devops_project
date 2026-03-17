@@ -1,3 +1,5 @@
 pydantic
 pyyaml
 pytest
+fastapi
+uvicorn

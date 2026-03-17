@@ -1,5 +1,5 @@
 import pytest
-from src.netgen import AppSpec, generate_policy
+from src.logic import AppSpec, generate_policy
 
 def test_policy_structure():
     """Verify that the generated YAML contains essential Kubernetes fields."""
