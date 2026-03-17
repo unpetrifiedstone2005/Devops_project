@@ -112,7 +112,7 @@ Automated via **GitHub Actions**. Every push triggers a workflow that:
 * Runs the **pytest test suite** located in `tests/unit/`
 * Performs a **smoke test** by executing the generator to ensure valid artifact creation
 
----
+
 
 ### ✅ Monitoring & Observability
 
@@ -124,7 +124,7 @@ This ensures:
 * Execution results are traceable
 * Logs can be easily integrated with external log aggregation tools
 
----
+
 
 ### ✅ Configuration Management
 
@@ -138,7 +138,7 @@ infrastructure/kubernetes/app.json
 
 This allows network policies to be updated without modifying source code.
 
----
+
 
 ### ✅ Containerization
 
