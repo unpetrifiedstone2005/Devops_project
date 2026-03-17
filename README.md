@@ -98,28 +98,61 @@ curl -X POST http://localhost:8000/generate \
 
 The tool uses Pydantic for strict data validation, ensuring that only valid JSON schemas can generate Kubernetes manifests.
 
----
-
 ### ✅ Authentication & Security
+
 Following Zero Trust principles, the API is protected by a custom header-based authentication system (X-API-KEY). This prevents unauthorized access to internal infrastructure tools.
 
----
 
 ### ✅ CI/CD Pipeline
-Automated via GitHub Actions. Every push triggers a workflow that:
 
-Sets up a Python 3.11 environment.
+Automated via **GitHub Actions**. Every push triggers a workflow that:
 
-Performs Linting (flake8) to ensure code quality.
-
-Runs the pytest suite covering both core logic and API endpoints.
-
-Executes a Docker Build Check to verify infrastructure integrity.
+* Sets up a **Python 3.11 environment**
+* Installs required dependencies
+* Runs the **pytest test suite** located in `tests/unit/`
+* Performs a **smoke test** by executing the generator to ensure valid artifact creation
 
 ---
 
-### ✅ Configuration Management & IaC
-Following Infrastructure as Code (IaC) principles, application configuration is separated from logic. Service dependency definitions can be stored in infrastructure/kubernetes/app.json, allowing policies to be updated without modifying source code.
+### ✅ Monitoring & Observability
+
+The project uses Python’s built-in **logging** library to provide structured operational logs.
+
+This ensures:
+
+* Validation errors are clearly visible
+* Execution results are traceable
+* Logs can be easily integrated with external log aggregation tools
+
+---
+
+### ✅ Configuration Management
+
+Following **Infrastructure as Code (IaC)** principles, application configuration is separated from logic.
+
+All service dependency definitions are stored in:
+
+```
+infrastructure/kubernetes/app.json
+```
+
+This allows network policies to be updated without modifying source code.
+
+---
+
+### ✅ Containerization
+
+The project includes a **multi-layered Dockerfile** using the lightweight base image:
+
+```
+python:3.11-slim
+```
+
+Benefits:
+
+* Reduced attack surface
+* Faster build times
+* Consistent runtime environment across systems
 
 ---
 
