@@ -77,7 +77,7 @@ docker compose -f infrastructure/docker/docker-compose.yml up --build
 Since the tool is a REST API, you "input" data using a POST request. You must include the X-API-KEY header for authentication.
 ```
 
-Sample Input Json to test the API
+#### Sample Input Json to test the API
 
 ```bash
 {
