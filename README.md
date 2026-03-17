@@ -2,7 +2,7 @@
 
 ## Overview
 
-This DevOps utility automates the generation of Kubernetes `NetworkPolicy` manifests. By defining application dependencies in a structured JSON format, the tool enforces **Zero Trust** and **Least Privilege** network security across microservices, eliminating the need for manual YAML authoring.
+This DevOps utility automates the generation of Kubernetes `NetworkPolicy` manifests via a **Secure REST API**. By exposing the generator through **FastAPI**, it allows teams to dynamically request security policies by providing application dependencies in a structured JSON format. This tool enforces **Zero Trust** and **Least Privilege** network security across microservices, eliminating the need for manual YAML authoring.
 
 ---
 
@@ -10,18 +10,19 @@ This DevOps utility automates the generation of Kubernetes `NetworkPolicy` manif
 
 Following professional DevOps directory standards, the repository is organized as follows:
 
-```
+```text
 Devops_project/
 │
-├── .github/workflows/        # CI/CD pipeline definitions (GitHub Actions)
-├── docs/                     # Technical documentation (architecture, guides)
+├── .github/workflows/         # CI/CD pipeline (Linting, Tests, Docker Build)
+├── docs/                      # Technical documentation (architecture, guides)
 ├── infrastructure/
-│   ├── kubernetes/           # Configuration management data (app.json)
-│   └── docker/               # Containerization logic and Dockerfile
-├── src/                      # Core Python implementation and logic
-├── tests/
-│   └── unit/                 # Automated unit tests using pytest
-├── requirements.txt          # Python dependency manifest
+│   ├── kubernetes/            # Configuration management data (app.json)
+│   └── docker/                # Dockerfile and docker-compose.yml
+├── src/                       # Core Python implementation
+│   ├── main.py                # FastAPI Service (API Entry point)
+│   ├── logic.py               # Core Generation Engine
+│   └── tests/                 # Unit and Integration tests (pytest)
+├── requirements.txt           # Python dependency manifest
 └── README.md
 ```
 
@@ -46,96 +47,79 @@ python -m pip install -r requirements.txt
 
 ## 🚀 Usage
 
-### Local Execution
+### Local API Execution
 
-To generate a network policy using the default configuration:
+To run the generator as a live local service:
 
 ```bash
-python src/netgen.py infrastructure/kubernetes/app.json
+python -m uvicorn src.main:app --reload
+```
+
+```text
+The service will be available at http://127.0.0.1:8000. Access the Interactive Swagger UI at http://127.0.0.1:8000/docs.
 ```
 
 ---
 
 ### Docker Execution
 
-The tool is fully containerized to ensure portability and environment consistency.
+The tool is fully containerized and orchestrated via Docker Compose to ensure portability and environment consistency.
 
-#### Build the Image
-
-```bash
-docker build -t netgen .
-```
-
-#### Run the Generator
-
-**Windows (PowerShell / CMD)**
+#### Start the Service
 
 ```bash
-docker run -v %cd%:/app netgen infrastructure/kubernetes/app.json
+docker compose -f infrastructure/docker/docker-compose.yml up --build
 ```
 
-**Linux / Mac**
+#### Test the API (Input Data via Postman/Curl)
+
+```text
+Since the tool is a REST API, you "input" data using a POST request. You must include the X-API-KEY header for authentication.
+```
+
+#### Using Curl:
 
 ```bash
-docker run -v $(pwd):/app netgen infrastructure/kubernetes/app.json
+curl -X POST http://localhost:8000/generate \
+     -H "Content-Type: application/json" \
+     -H "X-API-KEY: devops-internal-secret" \
+     -d '{
+       "name": "frontend-service",
+       "labels": {"app": "web-ui"},
+       "ingress_sources": [{"app_name": "load-balancer", "port": 80}]
+     }'
 ```
-
-The generated Kubernetes `NetworkPolicy` YAML will be output to the mounted directory.
 
 ---
 
 ## 🛡️ DevOps Implementation Details
 
+### ✅ Secure REST API (FastAPI)
+
+The tool uses Pydantic for strict data validation, ensuring that only valid JSON schemas can generate Kubernetes manifests.
+
+---
+
+### ✅ Authentication & Security
+Following Zero Trust principles, the API is protected by a custom header-based authentication system (X-API-KEY). This prevents unauthorized access to internal infrastructure tools.
+
+---
+
 ### ✅ CI/CD Pipeline
+Automated via GitHub Actions. Every push triggers a workflow that:
 
-Automated via **GitHub Actions**. Every push triggers a workflow that:
+Sets up a Python 3.11 environment.
 
-* Sets up a **Python 3.11 environment**
-* Installs required dependencies
-* Runs the **pytest test suite** located in `tests/unit/`
-* Performs a **smoke test** by executing the generator to ensure valid artifact creation
+Performs Linting (flake8) to ensure code quality.
 
----
+Runs the pytest suite covering both core logic and API endpoints.
 
-### ✅ Monitoring & Observability
-
-The project uses Python’s built-in **logging** library to provide structured operational logs.
-
-This ensures:
-
-* Validation errors are clearly visible
-* Execution results are traceable
-* Logs can be easily integrated with external log aggregation tools
+Executes a Docker Build Check to verify infrastructure integrity.
 
 ---
 
-### ✅ Configuration Management
-
-Following **Infrastructure as Code (IaC)** principles, application configuration is separated from logic.
-
-All service dependency definitions are stored in:
-
-```
-infrastructure/kubernetes/app.json
-```
-
-This allows network policies to be updated without modifying source code.
-
----
-
-### ✅ Containerization
-
-The project includes a **multi-layered Dockerfile** using the lightweight base image:
-
-```
-python:3.11-slim
-```
-
-Benefits:
-
-* Reduced attack surface
-* Faster build times
-* Consistent runtime environment across systems
+### Configuration Management & IaC
+Following Infrastructure as Code (IaC) principles, application configuration is separated from logic. Service dependency definitions can be stored in infrastructure/kubernetes/app.json, allowing policies to be updated without modifying source code.
 
 ---
 
